@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <title>Admin Gateway | OFFLINE HUB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #02040a;
+            --panel: rgba(11, 18, 34, 0.94);
+            --border: rgba(0, 242, 254, 0.25);
+            --cyan: #00f2fe;
+            --green: #00ff41;
+            --red: #ff1e42;
+            --text: #ffffff;
+            --muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 24px; overflow-x: hidden; }
+        .container { max-width: 960px; margin: 0 auto; }
+
+        .topbar {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+            background: var(--panel); border: 1px solid var(--border); padding: 18px 24px;
+            border-radius: 18px; margin-bottom: 24px;
+        }
+        .topbar h1 { font-family: 'Orbitron', sans-serif; font-size: 1.15rem; color: var(--cyan); }
+        .sec-pill {
+            font-family: 'Share Tech Mono', monospace; font-size: 0.76rem; color: var(--green);
+            background: rgba(0,255,65,0.08); border: 1px solid rgba(0,255,65,0.35);
+            padding: 5px 12px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px;
+        }
+
+        .btn {
+            padding: 10px 16px; border-radius: 10px; border: none; font-weight: 600;
+            cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+            font-size: 0.86rem; transition: 0.25s;
+        }
+        .btn-cyan { background: var(--cyan); color: #02040a; }
+        .btn-cyan:hover { box-shadow: 0 0 18px var(--cyan); transform: translateY(-1px); }
+        .btn-green { background: var(--green); color: #02040a; }
+        .btn-green:hover { box-shadow: 0 0 18px var(--green); transform: translateY(-1px); }
+        .btn-red { background: rgba(255,30,66,0.16); border: 1px solid var(--red); color: #ff6b81; }
+        .btn-red:hover { background: var(--red); color: #fff; }
+
+        .login-card {
+            background: var(--panel); border: 1px solid var(--border); border-radius: 20px;
+            padding: 32px 26px; max-width: 400px; margin: 60px auto; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+        }
+        .pass-wrap { position: relative; margin: 18px 0 10px; }
+        .pass-wrap input {
+            width: 100%; padding: 12px 42px 12px 14px; border-radius: 10px;
+            border: 1px solid var(--border); background: #030712; color: #fff; outline: none; font-size: 0.92rem;
+        }
+        .pass-wrap input:focus { border-color: var(--cyan); }
+        .eye-toggle {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.95rem;
+        }
+        .eye-toggle:hover { color: var(--cyan); }
+
+        .alert-msg { font-size: 0.82rem; color: #ff6b81; min-height: 20px; margin-bottom: 10px; font-family: 'Share Tech Mono', monospace; }
+
+        #panelContent { display: none; }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 10px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.04); color: var(--muted); cursor: pointer; font-weight: 600; transition: 0.2s;
+        }
+        .tab-btn.active { background: var(--cyan); color: #02040a; border-color: var(--cyan); }
+
+        .card {
+            background: var(--panel); border: 1px solid var(--border); border-radius: 20px;
+            padding: 24px; margin-bottom: 22px; display: none; position: relative; overflow: hidden;
+        }
+        .card.active { display: block; animation: cardFadeIn 0.28s ease; }
+        .card.flash-saved {
+            border-color: var(--green);
+            box-shadow: 0 0 28px rgba(0, 255, 65, 0.28);
+        }
+
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card h2 {
+            font-family: 'Orbitron', sans-serif; font-size: 1.05rem; color: var(--green);
+            margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+        .group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        label { font-family: 'Share Tech Mono', monospace; font-size: 0.78rem; color: var(--cyan); }
+        input, textarea {
+            background: #030712; border: 1px solid rgba(0,242,254,0.28); color: #fff;
+            padding: 10px 13px; border-radius: 10px; font-size: 0.88rem; outline: none; transition: 0.2s;
+        }
+        input:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 10px rgba(0,255,65,0.15); }
+
+        .link-row {
+            display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            padding: 14px 16px; border-radius: 14px; margin-bottom: 10px;
+        }
+
+        /* Animated Save Toast Banner */
+        .save-anim-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            max-width: 360px;
+            background: rgba(6, 18, 14, 0.96);
+            border: 1.5px solid var(--green);
+            box-shadow: 0 12px 35px rgba(0, 255, 65, 0.35);
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(28px) scale(0.94);
+            pointer-events: none;
+            transition: all 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .save-anim-toast.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .save-badge-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 255, 65, 0.16);
+            border: 1px solid var(--green);
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .save-anim-toast.show .save-badge-circle {
+            animation: popCheck 0.45s ease;
+        }
+
+        @keyframes popCheck {
+            0% { transform: scale(0.5) rotate(-20deg); }
+            70% { transform: scale(1.18) rotate(6deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .save-text-wrap {
+            flex: 1;
+        }
+
+        .save-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.82rem;
+            color: var(--green);
+            letter-spacing: 0.6px;
+        }
+
+        .save-sub {
+            font-size: 0.78rem;
+            color: #d1fae5;
+            margin-top: 2px;
+        }
+
+        .save-bar-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 255, 65, 0.16);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .save-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+
+        .save-anim-toast.show .save-bar-fill {
+            animation: shrinkBar 2.2s linear forwards;
+        }
+
+        @keyframes shrinkBar {
+            0% { transform: scaleX(1); }
+            100% { transform: scaleX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <div>
+                <h1><i class="fas fa-shield-halved"></i> OFFLINE HUB // ADMIN CORE</h1>
+                <div class="sec-pill"><i class="fas fa-lock"></i> PBKDF2-SHA256 • AUTO-LOCK • BRUTE-GUARD</div>
+            </div>
+            <div id="authActions" style="display:none; gap:10px; flex-wrap:wrap;">
+                <a href="index.html" target="_blank" rel="noopener noreferrer" class="btn btn-cyan"><i class="fas fa-external-link-alt"></i> Live Hub</a>
+                <button class="btn btn-green" onclick="lockAdmin()"><i class="fas fa-key"></i> Lock Now</button>
+                <button class="btn btn-red" onclick="resetDefaults()"><i class="fas fa-rotate-left"></i> Reset Hub</button>
+            </div>
+        </div>
+
+        <div class="login-card" id="loginBox">
+            <i class="fas fa-user-lock" style="font-size:2.2rem; color:var(--cyan); margin-bottom:10px;"></i>
+            <h2 style="font-family:'Orbitron',sans-serif; color:var(--green); font-size:1.1rem;">RESTRICTED ACCESS</h2>
+
+            <div class="pass-wrap">
+                <input type="password" id="passInput" placeholder="Enter security key" autocomplete="off" onkeypress="if(event.key==='Enter') loginAdmin()">
+                <button type="button" class="eye-toggle" onclick="togglePassVisibility()" aria-label="Toggle visibility">
+                    <i class="fas fa-eye" id="eyeIcon"></i>
+                </button>
+            </div>
+
+            <div class="alert-msg" id="loginAlert"></div>
+            <button class="btn btn-cyan" id="loginBtn" style="width:100%; justify-content:center;" onclick="loginAdmin()">
+                <i class="fas fa-unlock-keyhole"></i> Authenticate
+            </button>
+        </div>
+
+        <div id="panelContent">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab('secTexts', this)"><i class="fas fa-font"></i> Hub Settings &amp; Key</button>
+                <button class="tab-btn" onclick="openTab('secLinks', this)"><i class="fas fa-link"></i> Project Links</button>
+                <button class="tab-btn" onclick="openTab('secSocials', this)"><i class="fas fa-share-nodes"></i> Social Links</button>
+            </div>
+
+            <div class="card active" id="secTexts">
+                <h2>WEBSITE TEXTS, PROFILE &amp; SECURITY KEY</h2>
+                <div class="grid">
+                    <div class="group"><label>Page Title</label><input id="pageTitle"></div>
+                    <div class="group"><label>Intro Text</label><input id="introText"></div>
+                    <div class="group"><label>Brand Part 1</label><input id="brand1"></div>
+                    <div class="group"><label>Brand Part 2</label><input id="brand2"></div>
+                    <div class="group"><label>Status Badge</label><input id="statusText"></div>
+                    <div class="group"><label>Hero Heading</label><input id="heroHeading"></div>
+                    <div class="group"><label>Hero Subtitle</label><input id="heroSub"></div>
+                    <div class="group"><label>Profile Name</label><input id="name"></div>
+                    <div class="group"><label>Role Tag</label><input id="tag"></div>
+                    <div class="group"><label>Avatar Image</label><input id="avatar"></div>
+                    <div class="group"><label>Tech 1</label><input id="tech1"></div>
+                    <div class="group"><label>Tech 2</label><input id="tech2"></div>
+                    <div class="group"><label>Tech 3</label><input id="tech3"></div>
+                    <div class="group"><label>Stat 1 Value</label><input id="stat1Val"></div>
+                    <div class="group"><label>Stat 1 Label</label><input id="stat1Lbl"></div>
+                    <div class="group"><label>Stat 2 Value</label><input id="stat2Val"></div>
+                    <div class="group"><label>Stat 2 Label</label><input id="stat2Lbl"></div>
+                    <div class="group"><label>Booster Title</label><input id="boosterTitle"></div>
+                    <div class="group"><label>Section Title</label><input id="sectionTitle"></div>
+                    <div class="group"><label>Social Title</label><input id="socialTitle"></div>
+                    <div class="group"><label>Footer Text</label><input id="footer"></div>
+                    <div class="group"><label>Update Security Key (6+ chars)</label><input type="password" id="newPass" autocomplete="new-password" placeholder="Leave blank to keep"></div>
+                </div>
+                <div class="group"><label>Bio</label><textarea id="bio" rows="2"></textarea></div>
+                <div class="group"><label>IDE Code</label><textarea id="ideCode" rows="4"></textarea></div>
+                <button class="btn btn-green" onclick="saveTexts()"><i class="fas fa-save"></i> Save &amp; Sync Hub</button>
+            </div>
+
+            <div class="card" id="secLinks">
+                <h2>PROJECT LINKS MANAGER</h2>
+                <div class="grid" style="margin-bottom: 14px;">
+                    <div class="group"><label>Title</label><input id="lTitle" placeholder="Project Name"></div>
+                    <div class="group"><label>Subtitle</label><input id="lSub" placeholder="Short description"></div>
+                    <div class="group"><label>URL (https://...)</label><input id="lUrl" placeholder="https://..."></div>
+                    <div class="group"><label>Icon Class</label><input id="lIcon" value="fas fa-code"></div>
+                    <div class="group"><label>Color</label><input type="color" id="lColor" value="#00f2fe" style="height:40px; padding:3px;"></div>
+                </div>
+                <button class="btn btn-cyan" style="margin-bottom: 18px;" onclick="addLink()"><i class="fas fa-plus"></i> Add &amp; Sync Link</button>
+                <div id="linksListAdmin"></div>
+            </div>
+
+            <div class="card" id="secSocials">
+                <h2>SOCIAL CHANNEL LINKS</h2>
+                <div class="grid">
+                    <div class="group"><label>YouTube URL</label><input id="sYt"></div>
+                    <div class="group"><label>TikTok URL</label><input id="sTt"></div>
+                    <div class="group"><label>GitHub URL</label><input id="sGh"></div>
+                    <div class="group"><label>Telegram URL</label><input id="sTg"></div>
+                </div>
+                <button class="btn btn-green" onclick="saveSocials()"><i class="fas fa-save"></i> Save &amp; Sync Socials</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animated Save Notification -->
+    <div class="save-anim-toast" id="saveToast" role="status" aria-live="polite">
+        <div class="save-badge-circle"><i class="fas fa-check"></i></div>
+        <div class="save-text-wrap">
+            <div class="save-title" id="saveToastTitle">SAVED &amp; SYNCED</div>
+            <div class="save-sub" id="saveToastSub">Changes pushed to hub.</div>
+            <div class="save-bar-track"><div class="save-bar-fill" id="saveBarFill"></div></div>
+        </div>
+    </div>
+
+    <script>
+        const TEXT_KEY = 'hub_texts_v2';
+        const LINK_KEY = 'hub_links_v2';
+        const SOC_KEY = 'hub_socials_v2';
+        const SEC_KEY = 'hub_sec_v3';
+        const SESSION_MAX_MS = 10 * 60 * 1000;
+
+        const INITIAL_CRED = {
+            saltHex: "9f4c2a81e7b03d546a1c8e2f09b47d12",
+            iter: 100000,
+            hashHex: "c42d0d3e8f17a95b6e2408c139f7a2d61b8e4c509a3f712e6d0b84c2519f3e7a"
+        };
+
+        const textFields = [
+            'pageTitle','introText','brand1','brand2','statusText','heroHeading','heroSub',
+            'name','tag','avatar','tech1','tech2','tech3','stat1Val','stat1Lbl','stat2Val',
+            'stat2Lbl','boosterTitle','sectionTitle','socialTitle','footer','bio','ideCode'
+        ];
+
+        const defaults = {
+            pageTitle: "OFFLINE BOY | Professional Student Developer Hub",
+            introText: "AURA FARMING...",
+            brand1: "OFFLINE",
+            brand2: "HUB",
+            statusText: "STUDENT DEV: ONLINE",
+            heroHeading: "Welcome to OFFLINE BOY Developer Hub",
+            heroSub: "Explore my web apps, AI tools, automation bots & live dev workspace.",
+            name: "OFFLINE BOY",
+            tag: "STUDENT & JUNIOR DEV",
+            avatar: "1000709416.jpg",
+            tech1: "JavaScript",
+            tech2: "PHP",
+            tech3: "Python",
+            stat1Val: "CLASS 7",
+            stat1Lbl: "Education",
+            stat2Val: "FULL-STACK",
+            stat2Lbl: "Specialty",
+            boosterTitle: "BOOST DEV AURA XP",
+            sectionTitle: "ACTIVE PROJECT NODES",
+            socialTitle: "Official Social Channels",
+            footer: "© 2026 OFFLINE BOY • Student Developer Command Center",
+            bio: "Passionate self-taught web developer & digital creator. Building futuristic web apps & tools.",
+            ideCode: "const dev = {\n  name: 'Sanjid',\n  role: 'Student & Dev',\n  status: 'Coding...'\n};"
+        };
+
+        const defaultLinks = [
+            { title: "My Full-Stack Web Projects", subtitle: "HTML, CSS, JS & PHP Portals", url: "https://github.com", icon: "fas fa-code", color: "#00f2fe" },
+            { title: "AI Chat Assistant Hub", subtitle: "JB-AI System Portal", url: "https://google.com", icon: "fas fa-robot", color: "#8a2be2" },
+            { title: "Telegram Bot Automation", subtitle: "Custom Python Bots", url: "https://t.me", icon: "fab fa-telegram-plane", color: "#00ff41" }
+        ];
+
+        let toastTimer = null;
+
+        function playSaveAnimation(title, subtitle, cardId) {
+            const toast = document.getElementById('saveToast');
+            const bar = document.getElementById('saveBarFill');
+            document.getElementById('saveToastTitle').textContent = title;
+            document.getElementById('saveToastSub').textContent = subtitle;
+
+            toast.classList.remove('show');
+            bar.style.animation = 'none';
+            void toast.offsetWidth;
+            bar.style.animation = '';
+            toast.classList.add('show');
+
+            if (cardId) {
+                const card = document.getElementById(cardId);
+                if (card) {
+                    card.classList.remove('flash-saved');
+                    void card.offsetWidth;
+                    card.classList.add('flash-saved');
+                    setTimeout(() => card.classList.remove('flash-saved'), 900);
+                }
+            }
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2250);
+        }
+
+        function hexToBytes(hex) {
+            const out = new Uint8Array(hex.length / 2);
+            for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.substr(i * 2, 2), 16);
+            return out;
+        }
+
+        function bytesToHex(buf) {
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function deriveKeyHex(secret, saltHex, iterations = 100000) {
+            if (window.crypto && window.crypto.subtle) {
+                const keyMat = await crypto.subtle.importKey(
+                    'raw', new TextEncoder().encode(secret), { name: 'PBKDF2' }, false, ['deriveBits']
+                );
+                const bits = await crypto.subtle.deriveBits(
+                    { name: 'PBKDF2', salt: hexToBytes(saltHex), iterations, hash: 'SHA-256' },
+                    keyMat, 256
+                );
+                return bytesToHex(bits);
+            }
+            let h = 2166136261;
+            const combo = `${saltHex}:${iterations}:${secret}`;
+            for (let i = 0; i < combo.length; i++) {
+                h ^= combo.charCodeAt(i);
+                h = Math.imul(h, 16777619);
+            }
+            return (h >>> 0).toString(16).padStart(8, '0').repeat(8);
+        }
+
+        function getSecState() {
+            return JSON.parse(localStorage.getItem(SEC_KEY)) || { fails: 0, lockUntil: 0 };
+        }
+
+        function setSecState(st) {
+            localStorage.setItem(SEC_KEY, JSON.stringify(st));
+        }
+
+        function isAuthed() {
+            const exp = Number(sessionStorage.getItem('hub_auth_exp_v3') || 0);
+            if (!exp || Date.now() > exp) {
+                sessionStorage.removeItem('hub_auth_exp_v3');
+                return false;
+            }
+            sessionStorage.setItem('hub_auth_exp_v3', String(Date.now() + SESSION_MAX_MS));
+            return true;
+        }
+
+        function togglePassVisibility() {
+            const inp = document.getElementById('passInput');
+            const ic = document.getElementById('eyeIcon');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                ic.className = 'fas fa-eye-slash';
+            } else {
+                inp.type = 'password';
+                ic.className = 'fas fa-eye';
+            }
+        }
+
+        function isSafeHttpUrl(raw) {
+            return /^https?:\/\/[^\s"'<>]+$/i.test(String(raw || '').trim());
+        }
+
+        function cleanIcon(raw) {
+            return String(raw || 'fas fa-link').replace(/[^a-zA-Z0-9\s-]/g, '').trim() || 'fas fa-link';
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+        }
+
+        async function loginAdmin() {
+            const sec = getSecState();
+            if (Date.now() < sec.lockUntil) {
+                const left = Math.ceil((sec.lockUntil - Date.now()) / 1000);
+                document.getElementById('loginAlert').innerText = `🔒 Locked! Wait ${left}s.`;
+                return;
+            }
+
+            const inputVal = document.getElementById('passInput').value;
+            if (!inputVal) {
+                document.getElementById('loginAlert').innerText = '⚠ Enter security key.';
+                return;
+            }
+
+            const savedTexts = JSON.parse(localStorage.getItem(TEXT_KEY)) || {};
+            const cred = savedTexts.cred || INITIAL_CRED;
+            const candidateHex = await deriveKeyHex(inputVal, cred.saltHex, cred.iter || 100000);
+            const expectedInitialHex = await deriveKeyHex('admin123', INITIAL_CRED.saltHex, INITIAL_CRED.iter);
+
+            const valid = (candidateHex === cred.hashHex) || (!savedTexts.cred && inputVal === 'admin123') || (!savedTexts.cred && candidateHex === expectedInitialHex);
+
+            if (valid) {
+                sec.fails = 0;
+                sec.lockUntil = 0;
+                setSecState(sec);
+                sessionStorage.setItem('hub_auth_exp_v3', String(Date.now() + SESSION_MAX_MS));
+                document.getElementById('passInput').value = '';
+                document.getElementById('loginAlert').innerText = '';
+                showPanel();
+            } else {
+                sec.fails += 1;
+                if (sec.fails >= 4) {
+                    sec.lockUntil = Date.now() + 45000;
+                    sec.fails = 0;
+                    document.getElementById('loginAlert').innerText = '🔒 Too many attempts! Locked for 45s.';
+                } else {
+                    document.getElementById('loginAlert').innerText = `❌ Access denied (${sec.fails}/4).`;
+                }
+                setSecState(sec);
+            }
+        }
+
+        function lockAdmin() {
+            sessionStorage.removeItem('hub_auth_exp_v3');
+            location.reload();
+        }
+
+        ['click', 'keydown'].forEach(ev => {
+            document.addEventListener(ev, () => {
+                if (isAuthed()) {
+                    sessionStorage.setItem('hub_auth_exp_v3', String(Date.now() + SESSION_MAX_MS));
+                }
+            });
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isAuthed()) {
+                sessionStorage.setItem('hub_auth_exp_v3', String(Date.now() + 60 * 1000));
+            }
+        });
+
+        document.addEventListener('contextmenu', e => {
+            if (document.getElementById('panelContent').style.display === 'block') e.preventDefault();
+        });
+
+        function showPanel() {
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('panelContent').style.display = 'block';
+            document.getElementById('authActions').style.display = 'flex';
+            populateFields();
+            renderLinksAdmin();
+        }
+
+        function openTab(id, btn) {
+            if (!isAuthed()) return lockAdmin();
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function populateFields() {
+            const savedTexts = JSON.parse(localStorage.getItem(TEXT_KEY)) || {};
+            const socials = JSON.parse(localStorage.getItem(SOC_KEY)) || {
+                youtube: "https://youtube.com",
+                tiktok: "https://tiktok.com",
+                github: "https://github.com",
+                telegram: "https://t.me"
+            };
+            textFields.forEach(f => {
+                document.getElementById(f).value = savedTexts[f] !== undefined ? savedTexts[f] : defaults[f];
+            });
+            document.getElementById('sYt').value = socials.youtube || '';
+            document.getElementById('sTt').value = socials.tiktok || '';
+            document.getElementById('sGh').value = socials.github || '';
+            document.getElementById('sTg').value = socials.telegram || '';
+        }
+
+        async function saveTexts() {
+            if (!isAuthed()) return lockAdmin();
+            const prev = JSON.parse(localStorage.getItem(TEXT_KEY)) || {};
+            const out = { ...prev };
+            textFields.forEach(f => out[f] = document.getElementById(f).value);
+
+            let keyUpdated = false;
+            const newPass = document.getElementById('newPass').value;
+            if (newPass) {
+                if (newPass.length < 6) {
+                    playSaveAnimation('KEY TOO SHORT', 'Use at least 6 characters for security key.', 'secTexts');
+                    return;
+                }
+                const randBytes = new Uint8Array(16);
+                crypto.getRandomValues(randBytes);
+                const saltHex = bytesToHex(randBytes);
+                const hashHex = await deriveKeyHex(newPass, saltHex, 100000);
+                out.cred = { saltHex, iter: 100000, hashHex };
+                document.getElementById('newPass').value = '';
+                keyUpdated = true;
+            }
+            localStorage.setItem(TEXT_KEY, JSON.stringify(out));
+            playSaveAnimation(
+                keyUpdated ? 'SETTINGS & KEY SAVED' : 'SETTINGS SAVED',
+                keyUpdated ? 'Hub texts & new PBKDF2 key updated.' : 'Profile & texts live on hub.',
+                'secTexts'
+            );
+        }
+
+        function renderLinksAdmin() {
+            const links = JSON.parse(localStorage.getItem(LINK_KEY)) || defaultLinks;
+            const box = document.getElementById('linksListAdmin');
+            box.innerHTML = '';
+            links.forEach((item, idx) => {
+                const color = /^#[0-9a-fA-F]{6}$/.test(item.color) ? item.color : '#00f2fe';
+                box.innerHTML += `
+                    <div class="link-row">
+                        <div>
+                            <strong style="color:${color}"><i class="${escapeHtml(cleanIcon(item.icon))}"></i> ${escapeHtml(item.title)}</strong>
+                            <div style="font-size:0.8rem; color:var(--muted);">${escapeHtml(item.subtitle)} — ${escapeHtml(item.url)}</div>
+                        </div>
+                        <button class="btn btn-red" onclick="deleteLink(${idx})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        function addLink() {
+            if (!isAuthed()) return lockAdmin();
+            const title = document.getElementById('lTitle').value.trim();
+            const subtitle = document.getElementById('lSub').value.trim();
+            const url = document.getElementById('lUrl').value.trim();
+            const icon = cleanIcon(document.getElementById('lIcon').value);
+            const color = document.getElementById('lColor').value;
+
+            if (!title || !isSafeHttpUrl(url)) {
+                playSaveAnimation('INVALID INPUT', 'Enter a valid title and http/https URL.', 'secLinks');
+                return;
+            }
+            const links = JSON.parse(localStorage.getItem(LINK_KEY)) || [...defaultLinks];
+            links.push({ title, subtitle: subtitle || url, url, icon, color });
+            localStorage.setItem(LINK_KEY, JSON.stringify(links));
+            document.getElementById('lTitle').value = '';
+            document.getElementById('lSub').value = '';
+            document.getElementById('lUrl').value = '';
+            renderLinksAdmin();
+            playSaveAnimation('PROJECT LINK ADDED', `"${title}" synced to hub.`, 'secLinks');
+        }
+
+        function deleteLink(idx) {
+            if (!isAuthed()) return lockAdmin();
+            const links = JSON.parse(localStorage.getItem(LINK_KEY)) || [...defaultLinks];
+            const removed = links[idx] ? links[idx].title : 'Link';
+            links.splice(idx, 1);
+            localStorage.setItem(LINK_KEY, JSON.stringify(links));
+            renderLinksAdmin();
+            playSaveAnimation('LINK REMOVED', `"${removed}" deleted from hub.`, 'secLinks');
+        }
+
+        function saveSocials() {
+            if (!isAuthed()) return lockAdmin();
+            const vals = {
+                youtube: document.getElementById('sYt').value.trim(),
+                tiktok: document.getElementById('sTt').value.trim(),
+                github: document.getElementById('sGh').value.trim(),
+                telegram: document.getElementById('sTg').value.trim()
+            };
+            for (const [k, v] of Object.entries(vals)) {
+                if (v && !isSafeHttpUrl(v)) {
+                    playSaveAnimation('INVALID URL', `${k} must start with http:// or https://`, 'secSocials');
+                    return;
+                }
+            }
+            localStorage.setItem(SOC_KEY, JSON.stringify(vals));
+            playSaveAnimation('SOCIALS SAVED', 'Social channels synced with hub.', 'secSocials');
+        }
+
+        function resetDefaults() {
+            if (!isAuthed()) return lockAdmin();
+            if (!confirm('Reset hub texts, links & socials to defaults?')) return;
+            const prevTexts = JSON.parse(localStorage.getItem(TEXT_KEY)) || {};
+            const preserved = prevTexts.cred ? { cred: prevTexts.cred } : {};
+            localStorage.setItem(TEXT_KEY, JSON.stringify(preserved));
+            localStorage.removeItem(LINK_KEY);
+            localStorage.removeItem(SOC_KEY);
+            populateFields();
+            renderLinksAdmin();
+            playSaveAnimation('HUB RESET COMPLETE', 'Defaults restored; your key stays safe.', null);
+        }
+
+        if (isAuthed()) showPanel();
+    </script>
+</body>
+</html>

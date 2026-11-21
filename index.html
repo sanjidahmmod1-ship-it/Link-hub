@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFFLINE BOY | Professional Student Developer Hub</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #02040a;
+            --panel-bg: rgba(10, 16, 30, 0.72);
+            --panel-border: rgba(0, 242, 254, 0.25);
+            --primary-glow: #00f2fe;
+            --accent-red: #ff1e42;
+            --secondary-glow: #8a2be2;
+            --hacker-green: #00ff41;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #cursorAura {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(138, 43, 226, 0.04) 45%, transparent 70%);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .click-shockwave {
+            position: fixed;
+            border-radius: 50%;
+            border: 2px solid var(--primary-glow);
+            box-shadow: 0 0 20px var(--primary-glow);
+            pointer-events: none;
+            transform: translate(-50%, -50%) scale(0);
+            animation: shockwaveExpand 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            z-index: 9998;
+        }
+
+        @keyframes shockwaveExpand {
+            0% { width: 0px; height: 0px; opacity: 1; }
+            100% { width: 180px; height: 180px; opacity: 0; }
+        }
+
+        #cyberCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        #auraIntro {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #081226 0%, #010308 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.85s ease, visibility 0.85s, transform 0.85s;
+        }
+
+        #auraIntro.hide {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.15);
+        }
+
+        .aura-core {
+            position: relative;
+            width: 175px;
+            height: 175px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .aura-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid transparent;
+        }
+
+        .ring-1 {
+            width: 100%;
+            height: 100%;
+            border-top-color: #00f2fe;
+            border-bottom-color: #ff1e42;
+            animation: spin 1.1s linear infinite;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.7);
+        }
+
+        .ring-2 {
+            width: 82%;
+            height: 82%;
+            border-left-color: #00ff41;
+            border-right-color: #00f2fe;
+            animation: spinReverse 0.8s linear infinite;
+        }
+
+        .aura-burst {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,242,254,0.85) 0%, rgba(255,30,66,0) 70%);
+            animation: auraPulse 1.3s infinite ease-out;
+        }
+
+        .intro-avatar {
+            width: 112px;
+            height: 112px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2.5px solid #00f2fe;
+            box-shadow: 0 0 30px rgba(0, 242, 254, 0.95);
+            z-index: 2;
+            background: #0a0a0a;
+        }
+
+        .aura-text {
+            margin-top: 28px;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-glow);
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            animation: blinkText 0.5s infinite alternate;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+        @keyframes auraPulse {
+            0% { transform: scale(0.75); opacity: 1; }
+            100% { transform: scale(2.8); opacity: 0; }
+        }
+        @keyframes blinkText {
+            0% { opacity: 0.35; text-shadow: 0 0 5px #00f2fe; }
+            100% { opacity: 1; text-shadow: 0 0 25px #00f2fe; }
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 10, 20, 0.82);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--panel-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            gap: 14px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-brand span.highlight {
+            color: var(--accent-red);
+            text-shadow: 0 0 12px var(--accent-red);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            transition: 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-glow);
+        }
+
+        .equalizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 18px;
+        }
+
+        .eq-bar {
+            width: 3px;
+            background: var(--primary-glow);
+            border-radius: 2px;
+            animation: eqBounce 0.8s infinite ease-in-out alternate;
+        }
+
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; background: var(--accent-red); }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+        .eq-bar:nth-child(4) { animation-delay: 0.1s; background: var(--hacker-green); }
+
+        @keyframes eqBounce {
+            0% { height: 4px; }
+            100% { height: 18px; }
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 255, 65, 0.08);
+            border: 1px solid rgba(0, 255, 65, 0.35);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--hacker-green);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--hacker-green);
+            box-shadow: 0 0 10px var(--hacker-green);
+            animation: pulseDot 1.2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.4); }
+        }
+
+        .share-btn {
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--primary-glow);
+            color: var(--primary-glow);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.86rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .share-btn:hover {
+            background: var(--primary-glow);
+            color: #02040a;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .site-hero {
+            max-width: 1220px;
+            width: 92%;
+            margin: 28px auto 0;
+            background: linear-gradient(135deg, rgba(0, 242, 254, 0.08), rgba(138, 43, 226, 0.08), rgba(10, 16, 30, 0.85));
+            border: 1px solid var(--panel-border);
+            border-radius: 24px;
+            padding: 24px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-copy h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.35rem;
+            margin-bottom: 6px;
+        }
+
+        .hero-copy p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero-btn {
+            padding: 10px 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.86rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .hero-btn.primary {
+            background: var(--primary-glow);
+            color: #02040a;
+        }
+
+        .hero-btn.primary:hover {
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        .hero-btn.secondary {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+
+        .hero-btn.secondary:hover {
+            border-color: var(--hacker-green);
+            color: var(--hacker-green);
+        }
+
+        .web-wrapper {
+            max-width: 1220px;
+            width: 92%;
+            margin: 30px auto 45px;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 32px;
+            align-items: start;
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(35px);
+            transition: all 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .web-wrapper.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .profile-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--panel-border);
+            border-radius: 26px;
+            padding: 36px 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+        }
+
+        .laser-scanner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-glow), var(--accent-red), transparent);
+            box-shadow: 0 0 15px var(--primary-glow);
+            animation: scanVertical 4.5s infinite linear;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        @keyframes scanVertical {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.85; }
+            90% { opacity: 0.85; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .profile-wrapper {
+            position: relative;
+            width: 135px;
+            height: 135px;
+            margin: 0 auto 18px;
+        }
+
+        .profile-aura {
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #00f2fe, #ff1e42, #8a2be2, #00ff41, #00f2fe);
+            animation: spin 3s linear infinite;
+            filter: blur(10px);
+            opacity: 0.92;
+            z-index: 0;
+        }
+
+        .profile-img {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #02040a;
+            background: #0a0a0a;
+            z-index: 1;
+        }
+
+        .verified-badge {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            background: linear-gradient(135deg, #00ff41, #00f2fe);
+            color: #02040a;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
+            border: 2.5px solid #02040a;
+            z-index: 3;
+            box-shadow: 0 0 18px #00ff41;
+            animation: badgePulse 2s infinite ease-in-out;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .profile-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            background: linear-gradient(90deg, #ffffff, #00f2fe, #ff1e42, #ffffff);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShine 3.5s linear infinite;
+        }
+
+        @keyframes textShine {
+            to { background-position: 300% center; }
+        }
+
+        .student-dev-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 255, 65, 0.12);
+            border: 1px solid rgba(0, 255, 65, 0.4);
+            color: var(--hacker-green);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-family: 'Share Tech Mono', monospace;
+            margin-bottom: 14px;
+        }
+
+        .profile-bio {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .tech-orbital-container {
+            position: relative;
+            height: 70px;
+            margin: 15px 0 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--panel-border);
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--primary-glow);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: floatBadge 3s ease-in-out infinite alternate;
+        }
+
+        .tech-badge:nth-child(2) { animation-delay: 0.5s; color: #ff1e42; border-color: rgba(255,30,66,0.3); }
+        .tech-badge:nth-child(3) { animation-delay: 1s; color: #00ff41; border-color: rgba(0,255,65,0.3); }
+
+        @keyframes floatBadge {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-5px); }
+        }
+
+        .code-ide-box {
+            background: #010602;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: left;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.78rem;
+            color: #00ff41;
+            box-shadow: inset 0 0 15px rgba(0, 255, 65, 0.08);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ide-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.2);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+
+        .ide-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .ide-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .aura-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .stat-val {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-glow);
+        }
+
+        .stat-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .booster-box {
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.08), rgba(0, 242, 254, 0.08));
+            border: 1px solid var(--hacker-green);
+            padding: 14px;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .booster-box:hover {
+            background: rgba(0, 255, 65, 0.18);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+            transform: scale(1.02);
+        }
+
+        .booster-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .booster-count {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.2rem;
+            color: var(--hacker-green);
+            font-weight: bold;
+        }
+
+        .portal-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            padding: 18px 26px;
+            border-radius: 20px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15rem;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-glow);
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .link-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            border-radius: 22px;
+            padding: 24px;
+            text-decoration: none;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            transform: translateY(25px);
+        }
+
+        .link-card.slide-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -130%;
+            width: 80%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.28), transparent);
+            transform: skewX(-25deg);
+            transition: 0.7s;
+        }
+
+        .link-card:hover::before {
+            left: 150%;
+        }
+
+        .link-card:hover {
+            transform: translateY(-7px);
+            border-color: var(--primary-glow);
+            box-shadow: 0 15px 35px rgba(0, 242, 254, 0.25);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .icon-box {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.7rem;
+            transition: 0.35s;
+        }
+
+        .link-card:hover .icon-box {
+            transform: scale(1.12) rotate(-6deg);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+        }
+
+        .copy-icon {
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.25s;
+            z-index: 2;
+        }
+
+        .copy-icon:hover {
+            background: var(--primary-glow);
+            color: #02040a;
+        }
+
+        .card-info h3 {
+            font-size: 1.12rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .card-info p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .card-action {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-glow);
+        }
+
+        .card-action i {
+            transition: transform 0.3s;
+        }
+
+        .link-card:hover .card-action i {
+            transform: translateX(6px);
+        }
+
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .highlight-box {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            border-radius: 18px;
+            padding: 18px 20px;
+        }
+
+        .highlight-box i {
+            font-size: 1.25rem;
+            color: var(--primary-glow);
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .highlight-box h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .highlight-box p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .social-bottom-section {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--panel-border);
+            border-radius: 22px;
+            padding: 24px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .social-bottom-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .social-row {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+            font-size: 1.4rem;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            background: var(--primary-glow);
+            color: #02040a;
+            transform: translateY(-6px) scale(1.1);
+            box-shadow: 0 0 22px var(--primary-glow);
+        }
+
+        .web-footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            margin-top: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        #hackModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(1, 3, 8, 0.94);
+            backdrop-filter: blur(12px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #hackModal.active {
+            display: flex;
+        }
+
+        .terminal-box {
+            width: 100%;
+            max-width: 440px;
+            background: #020a04;
+            border: 1.5px solid var(--hacker-green);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 0 50px rgba(0, 255, 65, 0.4);
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--hacker-green);
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(0, 255, 65, 0.35);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+        }
+
+        .terminal-body {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            min-height: 95px;
+        }
+
+        .progress-bar-wrap {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 65, 0.15);
+            border-radius: 4px;
+            margin-top: 18px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--hacker-green);
+            box-shadow: 0 0 15px var(--hacker-green);
+            transition: width 1s linear;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-glow);
+            color: #02040a;
+            padding: 12px 26px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.5);
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 900px) {
+            .web-wrapper {
+                grid-template-columns: 1fr;
+                margin: 22px auto 35px;
+            }
+            .status-pill, .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursorAura"></div>
+
+    <div id="auraIntro">
+        <div class="aura-core">
+            <div class="aura-burst"></div>
+            <div class="aura-ring ring-1"></div>
+            <div class="aura-ring ring-2"></div>
+            <img id="introAvatarImg" src="1000709416.jpg" alt="I'M OFFLINE" class="intro-avatar">
+        </div>
+        <div class="aura-text" id="introTextDisplay">AURA FARMING...</div>
+    </div>
+
+    <div id="hackModal">
+        <div class="terminal-box">
+            <div class="terminal-header">
+                <span>ROOT@STUDENT_DEV:~#</span>
+                <span>[SECURE_TUNNEL]</span>
+            </div>
+            <div class="terminal-body" id="terminalText"></div>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar-fill" id="hackProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="cyberCanvas"></canvas>
+
+    <nav class="navbar">
+        <a href="#" class="nav-brand" id="brandDisplay">
+            <div class="equalizer">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+            </div>
+            <span id="brandPart1">OFFLINE</span><span class="highlight" id="brandPart2">HUB</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="#profileSection">Profile</a>
+            <a href="#projectsSection">Projects</a>
+            <a href="#socialsSection">Socials</a>
+        </div>
+
+        <div class="nav-actions">
+            <div class="status-pill">
+                <div class="status-dot"></div>
+                <span id="statusTextDisplay">STUDENT DEV: ONLINE</span>
+            </div>
+            <button class="share-btn magnetic" onclick="shareProfile()">
+                <i class="fas fa-share-alt"></i> Share Hub
+            </button>
+        </div>
+    </nav>
+
+    <header class="site-hero">
+        <div class="hero-copy">
+            <h2 id="heroHeadingDisplay">Welcome to OFFLINE BOY Developer Hub</h2>
+            <p id="heroSubDisplay">Explore my web apps, AI tools, automation bots &amp; live dev workspace.</p>
+        </div>
+        <div class="hero-cta-group">
+            <a href="#projectsSection" class="hero-btn primary"><i class="fas fa-rocket"></i> Explore Projects</a>
+            <a href="#socialsSection" class="hero-btn secondary"><i class="fas fa-hashtag"></i> Connect</a>
+        </div>
+    </header>
+
+    <main class="web-wrapper" id="webMain">
+        <aside class="profile-panel" id="profileSection">
+            <div class="laser-scanner"></div>
+            
+            <div class="profile-wrapper">
+                <div class="profile-aura"></div>
+                <img id="mainProfileImg" src="1000709416.jpg" alt="I'M OFFLINE" class="profile-img">
+                <div class="verified-badge" title="Verified Student Developer">
+                    <i class="fas fa-graduation-cap" style="font-size: 11px;"></i>
+                </div>
+            </div>
+
+            <h1 class="profile-name" id="profileNameDisplay">OFFLINE BOY</h1>
+            
+            <div class="student-dev-tag">
+                <i class="fas fa-laptop-code"></i> <span id="profileTagDisplay">STUDENT &amp; JUNIOR DEV</span>
+            </div>
+
+            <p class="profile-bio" id="profileBioDisplay">Passionate self-taught web developer &amp; digital creator. Building futuristic web apps &amp; tools.</p>
+
+            <div class="tech-orbital-container">
+                <div class="tech-badge"><i class="fab fa-js" style="color:#f7df1e;"></i> <span id="tech1Display">JavaScript</span></div>
+                <div class="tech-badge"><i class="fab fa-php" style="color:#777bb3;"></i> <span id="tech2Display">PHP</span></div>
+                <div class="tech-badge"><i class="fab fa-python" style="color:#3776ab;"></i> <span id="tech3Display">Python</span></div>
+            </div>
+
+            <div class="code-ide-box">
+                <div class="ide-header">
+                    <div class="ide-dots">
+                        <div class="ide-dot" style="background:#ff1e42;"></div>
+                        <div class="ide-dot" style="background:#f7df1e;"></div>
+                        <div class="ide-dot" style="background:#00ff41;"></div>
+                    </div>
+                    <span>student_dev.js</span>
+                </div>
+                <div id="typewriterCode"></div>
+            </div>
+
+            <div class="aura-stats">
+                <div class="stat-box">
+                    <div class="stat-val" id="stat1ValDisplay">CLASS 7</div>
+                    <div class="stat-label" id="stat1LblDisplay">Education</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="stat2ValDisplay" style="color: #00ff41;">FULL-STACK</div>
+                    <div class="stat-label" id="stat2LblDisplay">Specialty</div>
+                </div>
+            </div>
+
+            <div class="booster-box" onclick="boostAura()">
+                <div class="booster-title"><i class="fas fa-bolt" style="color: var(--hacker-green);"></i> <span id="boosterTitleDisplay">BOOST DEV AURA XP</span></div>
+                <div class="booster-count" id="boosterCount">2,026 XP</div>
+            </div>
+        </aside>
+
+        <section class="portal-section" id="projectsSection">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-network-wired"></i> <span id="sectionTitleDisplay">ACTIVE PROJECT NODES</span>
+                </div>
+                <span style="font-family: 'Share Tech Mono', monospace; color: var(--text-muted); font-size: 0.85rem;" id="nodeCount">03 ACTIVE LINKS</span>
+            </div>
+
+            <div class="links-grid" id="linksList"></div>
+
+            <div class="highlights-grid">
+                <div class="highlight-box">
+                    <i class="fas fa-code-branch"></i>
+                    <h4>Web &amp; UI Portals</h4>
+                    <p>Responsive dashboards, studios &amp; interactive web tools.</p>
+                </div>
+                <div class="highlight-box">
+                    <i class="fas fa-microchip"></i>
+                    <h4>AI &amp; Bot Systems</h4>
+                    <p>Smart chat assistants &amp; automated bot workflows.</p>
+                </div>
+                <div class="highlight-box">
+                    <i class="fas fa-bolt"></i>
+                    <h4>Fast &amp; Mobile Ready</h4>
+                    <p>Optimized for smooth browsing on phone &amp; desktop.</p>
+                </div>
+            </div>
+
+            <div class="social-bottom-section" id="socialsSection">
+                <div class="social-bottom-title"><i class="fas fa-share-nodes"></i> <span id="socialTitleDisplay">Official Social Channels</span></div>
+                <div class="social-row">
+                    <a id="socYt" class="social-icon magnetic" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a id="socTt" class="social-icon magnetic" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a id="socGh" class="social-icon magnetic" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a id="socTg" class="social-icon magnetic" title="Telegram"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="web-footer" id="footerDisplay">
+        © 2026 OFFLINE BOY • Student Developer Command Center
+    </footer>
+
+    <div class="toast" id="toast">Link Copied to Clipboard!</div>
+
+    <script>
+        const FALLBACK_OFFLINE_LOGO = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+                <rect width="300" height="300" fill="#0d0d0d"/>
+                <text x="150" y="128" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="44" fill="#ffffff" text-anchor="middle" letter-spacing="2">I'M</text>
+                <g transform="translate(38, 152)">
+                    <path d="M 22 6 A 17 17 0 1 0 36 6" fill="none" stroke="#e11d48" stroke-width="6.5" stroke-linecap="round"/>
+                    <line x1="29" y1="0" x2="29" y2="17" stroke="#e11d48" stroke-width="6.5" stroke-linecap="round"/>
+                    <text x="54" y="33" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="37" fill="#ffffff" letter-spacing="1.5">FFLINE</text>
+                </g>
+                <circle cx="95" cy="222" r="2.2" fill="#ffffff"/>
+                <circle cx="103" cy="224" r="2.2" fill="#ffffff"/>
+                <circle cx="195" cy="218" r="2.2" fill="#ffffff"/>
+                <circle cx="145" cy="245" r="2.2" fill="#ffffff"/>
+            </svg>
+        `);
+
+        const defaultLinks = [
+            { title: "My Full-Stack Web Projects", subtitle: "HTML, CSS, JS & PHP Portals", url: "https://github.com", icon: "fas fa-code", color: "#00f2fe" },
+            { title: "AI Chat Assistant Hub", subtitle: "JB-AI System Portal", url: "https://google.com", icon: "fas fa-robot", color: "#8a2be2" },
+            { title: "Telegram Bot Automation", subtitle: "Custom Python Bots", url: "https://t.me", icon: "fab fa-telegram-plane", color: "#00ff41" }
+        ];
+
+        function safeUrl(raw) {
+            const val = String(raw || '').trim();
+            if (/^https?:\/\//i.test(val)) return val;
+            return 'https://example.com';
+        }
+
+        function safeIcon(raw) {
+            const clean = String(raw || 'fas fa-link').replace(/[^a-zA-Z0-9\s-]/g, '').trim();
+            return clean || 'fas fa-link';
+        }
+
+        function safeColor(raw) {
+            return /^#[0-9a-fA-F]{6}$/.test(String(raw || '').trim()) ? raw.trim() : '#00f2fe';
+        }
+
+        let codeText = "";
+        let charIndex = 0;
+        let typingTimer = null;
+
+        function startTypewriter(text) {
+            clearTimeout(typingTimer);
+            codeText = text;
+            charIndex = 0;
+            const box = document.getElementById('typewriterCode');
+            box.innerHTML = '';
+            function step() {
+                if (charIndex < codeText.length) {
+                    box.innerHTML += codeText.charAt(charIndex) === '\n' ? '<br>' : codeText.charAt(charIndex);
+                    charIndex++;
+                    typingTimer = setTimeout(step, 35);
+                }
+            }
+            step();
+        }
+
+        function applyAllHubData(animateCards = false) {
+            const savedTexts = JSON.parse(localStorage.getItem('hub_texts_v2')) || {};
+            const savedSocials = JSON.parse(localStorage.getItem('hub_socials_v2')) || {};
+            const myLinks = JSON.parse(localStorage.getItem('hub_links_v2')) || defaultLinks;
+
+            const avatarSrc = (savedTexts.avatar || "1000709416.jpg").trim();
+            [document.getElementById('introAvatarImg'), document.getElementById('mainProfileImg')].forEach(img => {
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = FALLBACK_OFFLINE_LOGO;
+                };
+                img.src = avatarSrc;
+            });
+
+            document.title = savedTexts.pageTitle || "OFFLINE BOY | Professional Student Developer Hub";
+            document.getElementById('introTextDisplay').innerText = savedTexts.introText || "AURA FARMING...";
+            document.getElementById('brandPart1').innerText = savedTexts.brand1 || "OFFLINE";
+            document.getElementById('brandPart2').innerText = savedTexts.brand2 || "HUB";
+            document.getElementById('statusTextDisplay').innerText = savedTexts.statusText || "STUDENT DEV: ONLINE";
+            document.getElementById('heroHeadingDisplay').innerText = savedTexts.heroHeading || "Welcome to OFFLINE BOY Developer Hub";
+            document.getElementById('heroSubDisplay').innerText = savedTexts.heroSub || "Explore my web apps, AI tools, automation bots & live dev workspace.";
+            document.getElementById('profileNameDisplay').innerText = savedTexts.name || "OFFLINE BOY";
+            document.getElementById('profileTagDisplay').innerText = savedTexts.tag || "STUDENT & JUNIOR DEV";
+            document.getElementById('profileBioDisplay').innerText = savedTexts.bio || "Passionate self-taught web developer & digital creator. Building futuristic web apps & tools.";
+            document.getElementById('tech1Display').innerText = savedTexts.tech1 || "JavaScript";
+            document.getElementById('tech2Display').innerText = savedTexts.tech2 || "PHP";
+            document.getElementById('tech3Display').innerText = savedTexts.tech3 || "Python";
+            document.getElementById('stat1ValDisplay').innerText = savedTexts.stat1Val || "CLASS 7";
+            document.getElementById('stat1LblDisplay').innerText = savedTexts.stat1Lbl || "Education";
+            document.getElementById('stat2ValDisplay').innerText = savedTexts.stat2Val || "FULL-STACK";
+            document.getElementById('stat2LblDisplay').innerText = savedTexts.stat2Lbl || "Specialty";
+            document.getElementById('boosterTitleDisplay').innerText = savedTexts.boosterTitle || "BOOST DEV AURA XP";
+            document.getElementById('sectionTitleDisplay').innerText = savedTexts.sectionTitle || "ACTIVE PROJECT NODES";
+            document.getElementById('socialTitleDisplay').innerText = savedTexts.socialTitle || "Official Social Channels";
+            document.getElementById('footerDisplay').innerText = savedTexts.footer || "© 2026 OFFLINE BOY • Student Developer Command Center";
+
+            document.getElementById('socYt').onclick = (e) => triggerHackRedirect(e, safeUrl(savedSocials.youtube || 'https://youtube.com'), 'YouTube');
+            document.getElementById('socTt').onclick = (e) => triggerHackRedirect(e, safeUrl(savedSocials.tiktok || 'https://tiktok.com'), 'TikTok');
+            document.getElementById('socGh').onclick = (e) => triggerHackRedirect(e, safeUrl(savedSocials.github || 'https://github.com'), 'GitHub');
+            document.getElementById('socTg').onclick = (e) => triggerHackRedirect(e, safeUrl(savedSocials.telegram || 'https://t.me'), 'Telegram');
+
+            document.getElementById('nodeCount').innerText = `${String(myLinks.length).padStart(2, '0')} ACTIVE LINKS`;
+            renderLinks(myLinks, animateCards);
+
+            const nextIde = savedTexts.ideCode || "const dev = {\n  name: 'Sanjid',\n  role: 'Student & Dev',\n  status: 'Coding...'\n};";
+            if (nextIde !== codeText) startTypewriter(nextIde);
+        }
+
+        function renderLinks(linksArray, animateCards) {
+            const linksContainer = document.getElementById('linksList');
+            linksContainer.innerHTML = '';
+            linksArray.forEach((link, idx) => {
+                const targetUrl = safeUrl(link.url);
+                const iconClass = safeIcon(link.icon);
+                const accent = safeColor(link.color);
+
+                const card = document.createElement('div');
+                card.className = animateCards ? "link-card" : "link-card slide-in";
+                card.onclick = (e) => triggerHackRedirect(e, targetUrl, link.title || 'Project Node');
+
+                card.innerHTML = `
+                    <div class="card-top">
+                        <div class="icon-box" style="color: ${accent}">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <button class="copy-icon" title="Copy URL" onclick="copyLink(event, '${targetUrl}')">
+                            <i class="far fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="card-info">
+                        <h3></h3>
+                        <p></p>
+                    </div>
+                    <div class="card-action">
+                        <span>CONNECT NODE</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                `;
+                card.querySelector('h3').textContent = link.title || 'Untitled Node';
+                card.querySelector('p').textContent = link.subtitle || targetUrl;
+                linksContainer.appendChild(card);
+
+                if (animateCards) {
+                    setTimeout(() => card.classList.add('slide-in'), 140 * (idx + 1));
+                }
+            });
+        }
+
+        window.addEventListener('storage', (event) => {
+            if (['hub_texts_v2', 'hub_links_v2', 'hub_socials_v2'].includes(event.key)) {
+                applyAllHubData(false);
+                showToast("🔄 Live Admin Update Applied!");
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            applyAllHubData(true);
+            initCyberBackground();
+            
+            setTimeout(() => {
+                document.getElementById('auraIntro').classList.add('hide');
+                document.getElementById('webMain').classList.add('revealed');
+            }, 1500);
+        });
+
+        let auraPoints = 2026;
+        function boostAura() {
+            auraPoints += Math.floor(Math.random() * 25) + 10;
+            document.getElementById('boosterCount').innerText = auraPoints.toLocaleString() + " XP";
+            showToast("⚡ Student Dev XP Boosted!");
+        }
+
+        const cursorAura = document.getElementById('cursorAura');
+        document.addEventListener('mousemove', (e) => {
+            cursorAura.style.left = e.clientX + 'px';
+            cursorAura.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('click', (e) => {
+            const wave = document.createElement('div');
+            wave.className = 'click-shockwave';
+            wave.style.left = e.clientX + 'px';
+            wave.style.top = e.clientY + 'px';
+            document.body.appendChild(wave);
+            setTimeout(() => wave.remove(), 750);
+        });
+
+        function initCyberBackground() {
+            const canvas = document.getElementById('cyberCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const fontSize = 14;
+            const columns = Math.floor(canvas.width / 28);
+            const drops = Array(columns).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(2, 4, 10, 0.18)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = 'rgba(0, 255, 65, 0.12)';
+                ctx.font = fontSize + 'px Share Tech Mono';
+                for (let i = 0; i < drops.length; i++) {
+                    const text = Math.random() > 0.5 ? '1' : '0';
+                    ctx.fillText(text, i * 28, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.985) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        function triggerHackRedirect(event, url, title) {
+            event.preventDefault();
+            const safeTarget = safeUrl(url);
+            const modal = document.getElementById('hackModal');
+            const terminalText = document.getElementById('terminalText');
+            const progressBar = document.getElementById('hackProgress');
+
+            modal.classList.add('active');
+            progressBar.style.width = '0%';
+            terminalText.innerHTML = `> NODE: ${String(title).replace(/[<>]/g, '')}<br>> INITIALIZING STUDENT DEV TUNNEL...`;
+
+            setTimeout(() => { progressBar.style.width = '100%'; }, 50);
+            setTimeout(() => {
+                terminalText.innerHTML += `<br>> HANDSHAKE VERIFIED: [200 OK]<br>> BYPASSING FIREWALL...`;
+            }, 350);
+            setTimeout(() => {
+                terminalText.innerHTML += `<br><span style="color:#00ff41; font-weight:bold;">> ACCESS GRANTED! OPENING PORTAL...</span>`;
+            }, 750);
+            setTimeout(() => {
+                modal.classList.remove('active');
+                window.open(safeTarget, '_blank', 'noopener,noreferrer');
+            }, 1150);
+        }
+
+        function copyLink(event, url) {
+            event.stopPropagation();
+            navigator.clipboard.writeText(safeUrl(url)).then(() => {
+                showToast("Link Copied to Clipboard!");
+            });
+        }
+
+        function shareProfile() {
+            if (navigator.share) {
+                navigator.share({ title: document.title, url: window.location.href });
+            } else {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    showToast("Hub URL Copied!");
+                });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+    </script>
+</body>
+</html>
